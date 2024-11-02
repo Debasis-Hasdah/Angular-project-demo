@@ -1,14 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, Input } from '@angular/core';
 import { TaskComponent } from './task/task.component';
 import { NgFor } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 import { NewTaskComponent } from "./new-task/new-task.component";
+import { TasksService } from './tasks.service';
 
 interface NewTaskData {
   title: string;
   summary: string;
   dueDate: string;
-}
+};
 @Component({
   selector: 'app-tasks',
   standalone: true,
@@ -17,102 +18,29 @@ interface NewTaskData {
   styleUrl: './tasks.component.css'
 })
 export class TasksComponent {
-
-  isAddingTask=false
-  @Input({required:true})name?:string;
-  @Input({required:true})userId!:string;
-
-  onCompleteTask(id:string){
-    this.tasks =this.tasks.filter(task=> task.id !== id);
+  name = input.required<string>();
+  @Input({ required: true }) userId!: string;
+  isAddingTask = false;
+  //private taskService = new TasksService();
+  //we can create object and use this. same way we will use it in different places
+  // same can be done through dependency injection
+  constructor(public taskService: TasksService) {}
+  get selectedUserTasks() {
+    return this.taskService.getUserTasks(this.userId);
   }
+
   onStartAddTask() {
-    this.isAddingTask=true;
+    this.isAddingTask = true;
   }
+
   onCancelAddTask() {
-  this.isAddingTask=false;
+    this.isAddingTask = false;
   }
-
-  onAddTask(taskData : NewTaskData){
-    this.tasks.unshift({
-      id: new Date().getTime().toString(),
-      userId: this.userId,
-      title: taskData.title,
-      summary: taskData.summary,
-      dueDate: taskData.dueDate
-    })
-    this.isAddingTask=false;
-  }
-
-  public get selectedUserTasks(){
-    return this.tasks.filter((task)=> task.userId === this.userId)
-  }
-  tasks =[
-    {
-      id: 't1',
-      userId:'u1',
-      title: 'CSE Student',
-      summary:'learning Web1',
-      dueDate:'2022-05-24'
-    },
-    {
-      id: 't2',
-      userId:'u1',
-      title: 'CSE Student',
-      summary:'learning Web2',
-      dueDate:'2023-05-24'
-    },
-    {
-      id: 't3',
-      userId:'u1',
-      title: 'CSE Student',
-      summary:'learning Web3',
-      dueDate:'2024-05-24'
-    },
-    {
-      id: 't4',
-      userId:'u2',
-      title: 'CSE Student',
-      summary:'learning Web2',
-      dueDate:'2023-05-24'
-    },
-    {
-      id: 't5',
-      userId:'u2',
-      title: 'CSE Student',
-      summary:'learning Web3',
-      dueDate:'2024-05-24'
-    },
-    {
-      id: 't6',
-      userId:'u3',
-      title: 'CSE Student',
-      summary:'learning Web3',
-      dueDate:'2024-08-04'
-    },
-    {
-      id: 't6',
-      userId:'u4',
-      title: 'CSE Student',
-      summary:'learning linux',
-      dueDate:'2024-08-04'
-    },
-    {
-      id: 't7',
-      userId:'u5',
-      title: 'CSE Student',
-      summary:'learning machine-learning',
-      dueDate:'2024-08-04'
-    },
-    {
-      id: 't8',
-      userId:'u6',
-      title: 'CSE Student',
-      summary:'learning machine-learning',
-      dueDate:'2024-08-04'
-    }
-  ]
+  // onAddTask(taskData: NewTaskData) {
+  //   this.taskService.addTask(taskData, this.userId);
+  //   this.isAddingTask = false;
+  // }
 }
-
 /* import { Component, Input,  } from '@angular/core';
 import { TaskComponent } from './task/task.component';
 
